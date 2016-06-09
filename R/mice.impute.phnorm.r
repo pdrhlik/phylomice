@@ -1,5 +1,28 @@
-#' @param psi Inverse matrix containing phylogenetic information.
-#' This matrix should be passed directly to the mice function.
+#' Imputation by GLM and phylogenetic information
+#'
+#' Imputes univariate continuous missing data using the generalized least square approach.
+#' @aliases mice.impute.phnorm phnorm
+#' @param y Incomplete data vector of length \code{n}
+#' @param ry Vector of missing data pattern (\code{FALSE}=missing,
+#' \code{TRUE}=observed)
+#' @param x Matrix (\code{n} x \code{p}) of complete covariates.
+#' @param psi Covariance matrix containing phylogenetic information.
+#' @param psiinv Inverse of \code{psi}.
+#' @param ... Other named arguments.
+#' @return A vector of length \code{nmis} with imputations.
+#' @note \code{mice.impute.phnorm} is based on the
+#' \code{mice.impute.norm} method from \code{mice} package and the GLM
+#' approach by Garland and Ives (2000).
+#' @author Patrik Drhlik, Simon P. Blomberg, 2016
+#' @references Van Buuren, S., Groothuis-Oudshoorn, K. (2011). \code{mice}:
+#' Multivariate Imputation by Chained Equations in \code{R}. \emph{Journal of
+#' Statistical Software}, \bold{45}(3), 1-67.
+#' \url{http://www.jstatsoft.org/v45/i03/}
+#'
+#' Garland Jr, Theodore, and Anthony R. Ives. Using the past to predict
+#' the present: confidence intervals for regression equations in phylogenetic
+#' comparative methods. \emph{The American Naturalist}, 155.3 (2000): 346-364.
+#' \url{http://www.jstor.org/stable/10.1086/303327}
 #' @export
 mice.impute.phnorm <- function(y, ry, x, psi, psiinv, ...) {
 	x <- cbind(1, as.matrix(x))
@@ -28,19 +51,6 @@ mice.impute.phnorm <- function(y, ry, x, psi, psiinv, ...) {
 	ch <- sapply(1:nmiss, function(i) {
 		chhvec[i] - crossprod(cihCC[,i], cihmat[[i]])
 	}, USE.NAMES = FALSE)
-
-# 	# nonvectorized version
-# 	mu <- vector(mode = "numeric", length = nmiss)
-# 	ch <- vector(mode = "numeric", length = nmiss)
-# 	for (i in 1:nmiss) {
-# 		chh <- C[i,i]
-# 		CCinv <- chol2inv(chol(C[-i, -i]))
-# 		yy <- ymiss[-i]
-#
-# 		cih <- C[i, -i]
-# 		mu[i] <- cih %*% CCinv %*% (yy - .Internal(mean(yy)))
-# 		ch[i] <- chh - t(cih) %*% CCinv %*% cih
-# 	}
 
 	return(x[!ry, ] %*% parm$beta + rnorm(nmiss, mean = mu, sd = parm$sigma * ch))
 }
