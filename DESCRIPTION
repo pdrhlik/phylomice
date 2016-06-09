@@ -14,5 +14,6 @@ Imports:
 LinkingTo: Rcpp,
     RcppArmadillo
 Depends:
+    mice,
     RcppArmadillo
 RoxygenNote: 5.0.1
