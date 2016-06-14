@@ -1,4 +1,4 @@
-# Phylomice
+# phylomice
 Extension of R [mice](https://github.com/stefvanbuuren/mice) package adding new imputation methods that incorporate phylogenetic information.
 
 You should be familiar with the mice package to use this one.
@@ -18,20 +18,26 @@ This is a list of methods that are available in the package. Each of these metho
 Both of these arguments need to be computed before running mice because of the computational cost.
 
 ### Creating `psi` and `psiinv`
-Let's assume that you have your tree loaded in a `tree` variable. You can then create `psi` and `psiinv` like so using the [ape](https://github.com/cran/ape) package:
+Let's assume that you have your tree loaded in a `tree` variable. You can then create `psi` and `psiinv` using the `precomputePsi` helper function. You need to have the [ape](https://github.com/cran/ape) package installed.
 ```
-library(ape)
-psi <- vcv(tree)
-psiinv <- chol2inv(chol(psi))
-```
+prec <- precomputePsi(tree)
 
-We can invert `psi` using cholesky decomposition because it is a positive definite matrix.
+str(prec)
+List of 2
+ $ psi   : ...
+ $ psiinv: ...
+```
 
 ### phnorm
 Imputes univariate continuous missing data using the generalized least square approach. It is based on the **mice.impute.norm** method in **mice** package.
 ```
 library(phylomice)
 imp <- mice(data, method = 'phnorm', psi = psi, psiinv = psiinv)
+```
+
+If you have precomputed `psi` and `psiinv` using `precomputePsi`, your call would look like this:
+```
+imp <- mice(data, method = 'phnorm', psi = prec$psi, psiinv = prec$psiinv)
 ```
 ### phpmm
 This method is currently under development.
