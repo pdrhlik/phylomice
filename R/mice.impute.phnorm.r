@@ -43,16 +43,15 @@ mice.impute.phnorm <- function(y, ry, x, psi, psiinv, ...) {
 	}, USE.NAMES = FALSE)
 	# vector of means
 	mu <- sapply(1:nmiss, function(i) {
-		cihC <- crossprod(cihmat[[i]], Carr[[i]])
 		y <- ymiss[-i] - .Internal(mean(ymiss[-i]))
-		return(diag(crossprod(cihCC[,i], y)))
+		return(crossprod(cihCC[,i], y))
 	}, USE.NAMES = FALSE)
 	# vector of ch
 	ch <- sapply(1:nmiss, function(i) {
 		chhvec[i] - crossprod(cihCC[,i], cihmat[[i]])
 	}, USE.NAMES = FALSE)
 
-	return(x[!ry, ] %*% parm$beta + rnorm(nmiss, mean = mu, sd = parm$sigma * ch))
+	return(x[!ry, ] %*% parm$beta + rnorm(nmiss, mean = mu, sd = parm$sigma * sqrt(ch)))
 }
 
 .phnorm.draw <- function(y, ry, x, psiinv, ridge = 1e-05, ...) {
