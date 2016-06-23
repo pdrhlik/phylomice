@@ -19,28 +19,38 @@
 #' Statistical Software}, \bold{45}(3), 1-67.
 #' \url{http://www.jstatsoft.org/v45/i03/}
 #'
-#' Garland Jr, Theodore, and Anthony R. Ives. Using the past to predict
-#' the present: confidence intervals for regression equations in phylogenetic
-#' comparative methods. \emph{The American Naturalist}, 155.3 (2000): 346-364.
-#' \url{http://www.jstor.org/stable/10.1086/303327}
 #' @export
-mice.impute.phpp <- function(y, ry, x, psi, ...) {
-  x <- cbind(1, as.matrix(x))
-
-  mat2 <- psi/max(psi)
-  k <- 2
-  mat3 <- k - mat2
-  mat4 <- apply(mat3, 1, function (x) x/sum(x))
-
-  vals4 <- mat4[, 4]
-  vals44 <- vals4[-4]
-  vals44/sum(vals44)
-  donortip <- sample(c(1:3, 5:8), 1, prob=vals44/sum(vals44))
-
+mice.impute.phpp <- function(y, ry, x, psi, k = 2, ...) {
   ymiss <- y[!ry]
-  C <- psi[!ry, !ry]
+  psimiss <- psi[!ry, !ry]
+  psiobs <- psi[ry, ry]
   nmiss <- sum(!ry)
+  nobs <- sum(ry)
+  nall <- length(ry)
 
+  # Scaled distance matrix
+  scaled <- psi / max(psi)
+  # Similarity matrix
+  simil <- k - scaled
+  # Transition probabilities matrix
+  probs <- apply(simil, 1, function (x) {
+    x / sum(x)
+  })
+  # Resulting vector
+  res <- vector(mode = "numeric", length = nmiss)
+  j <- 1
+
+  for (i in which(!ry)) {
+    vals <- probs[, i]
+    valsNoMe <- vals[-i]
+    scaledVals <- valsNoMe / sum(valsNoMe)
+    # Choose one of the values with a certain probability
+    donortip <- sample(seq(1:nall)[-i], 1, prob = scaledVals)
+    res[j] <- y[donortip]
+    j <- j + 1
+  }
+
+  return(res)
 }
 
 
