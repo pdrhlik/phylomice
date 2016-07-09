@@ -6,7 +6,7 @@
 \alias{phnorm}
 \title{Imputation by GLM and phylogenetic information}
 \usage{
-mice.impute.phpp(y, ry, x, psi, ...)
+mice.impute.phpp(y, ry, x, psi, k = 2, ...)
 }
 \arguments{
 \item{y}{Incomplete data vector of length \code{n}}
@@ -41,10 +41,5 @@ Van Buuren, S., Groothuis-Oudshoorn, K. (2011). \code{mice}:
 Multivariate Imputation by Chained Equations in \code{R}. \emph{Journal of
 Statistical Software}, \bold{45}(3), 1-67.
 \url{http://www.jstatsoft.org/v45/i03/}
-
-Garland Jr, Theodore, and Anthony R. Ives. Using the past to predict
-the present: confidence intervals for regression equations in phylogenetic
-comparative methods. \emph{The American Naturalist}, 155.3 (2000): 346-364.
-\url{http://www.jstor.org/stable/10.1086/303327}
 }
 

@@ -21,11 +21,7 @@
 #'
 #' @export
 mice.impute.phpp <- function(y, ry, x, psi, k = 2, ...) {
-  ymiss <- y[!ry]
-  psimiss <- psi[!ry, !ry]
-  psiobs <- psi[ry, ry]
   nmiss <- sum(!ry)
-  nobs <- sum(ry)
   nall <- length(ry)
 
   # Scaled distance matrix
@@ -36,8 +32,12 @@ mice.impute.phpp <- function(y, ry, x, psi, k = 2, ...) {
   probs <- apply(simil, 1, function (x) {
     x / sum(x)
   })
+
+  # Values only from observed
+  probs[!ry, !ry] <- 0
+
   # Resulting vector
-  res <- vector(mode = "numeric", length = nmiss)
+  res <- vector(length = nmiss)
   j <- 1
 
   for (i in which(!ry)) {

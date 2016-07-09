@@ -1,3 +1,5 @@
+#' @title phpmm
+#' @export
 mice.impute.phpmm <- function(y, ry, x, psi, psiinv, donors = 5, type = 1,
                             ridge = 1e-05, version = "", ...)
 {
